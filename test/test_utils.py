@@ -1,5 +1,9 @@
 # pylint: disable=pointless-statement
 # pylint: disable=expression-not-assigned
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-class-docstring
+
+
 
 """Tests for pype/utils.py — all utility functions."""
 
@@ -23,7 +27,7 @@ def test_flatten_does_not_go_deep():
     assert flatten([[1, [2]], [3]]) == [1, [2], 3]
 
 def test_flatten_empty():
-    assert flatten([]) == []
+    assert flatten([]) == [] #pylint: disable=use-implicit-booleaness-not-comparison
 
 def test_flatten_deep_arbitrary_nesting():
     assert flatten_deep([1, [2, [3, [4]]]]) == [1, 2, 3, 4]
@@ -147,12 +151,14 @@ def test_field_in_pipeline():
 
 def test_attr_extracts_attribute():
     class Obj:
-        def __init__(self, x): self.x = x
+        def __init__(self, x):
+            self.x = x
     objs = [Obj(1), Obj(2)]
     assert list(map(attr("x"), objs)) == [1, 2]
 
 def test_attr_missing_returns_default():
-    class Obj: pass
+    class Obj:
+        pass
     assert attr("x", default=0)(Obj()) == 0
 
 
@@ -202,7 +208,7 @@ def test_matching_substring():
     assert pred("walked") is False
 
 def test_matching_regex():
-    import re
+    import re # pylint: disable=import-outside-toplevel
     pred = matching(re.compile(r"^\d+$"))
     assert pred("123") is True
     assert pred("abc") is False

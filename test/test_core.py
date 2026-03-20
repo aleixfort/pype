@@ -1,4 +1,6 @@
 # pylint: disable=pointless-statement
+# pylint: disable=missing-function-docstring
+
 
 """Tests for pype/core.py — Pipeline class and pipe sentinel."""
 import pytest
@@ -37,7 +39,7 @@ def test_compose_three_pipelines():
 def test_compose_preserves_order():
     first  = pipe / (lambda v: v + [1])
     second = pipe / (lambda v: v + [2])
-    result = [] > first / second
+    result = [] > first / second #pylint: disable=use-implicit-booleaness-not-comparison
     assert result == [1, 2]
 
 
@@ -52,7 +54,8 @@ def test_map_preserves_length():
     assert len(result) == 4
 
 def test_map_with_def_function():
-    def double(x): return x * 2
+    def double(x):
+        return x * 2
     result = [1, 2, 3] > pipe // double
     assert result == [2, 4, 6]
 

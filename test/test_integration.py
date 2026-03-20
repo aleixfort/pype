@@ -1,9 +1,11 @@
 # pylint: disable=pointless-statement
 # pylint: disable=expression-not-assigned
+# pylint: disable=missing-function-docstring
 
 """Integration tests — full pipelines combining core and utils."""
 
 import statistics
+import pytest
 from pype import pipe
 from pype.utils import (
     flatten,
@@ -31,7 +33,8 @@ def test_map_flatten_filter_reduce():
     assert result == "bar baz foo hello world"
 
 def test_word_processing_pipeline():
-    def has_vowel(word): return any(v in word for v in "aeiou")
+    def has_vowel(word):
+        return any(v in word for v in "aeiou")
 
     tokenize = pipe // str.split / flatten
     clean    = pipe // str.strip // str.lower
@@ -44,8 +47,10 @@ def test_word_processing_pipeline():
     assert (["  FOO  "] > process) == "foo"
 
 def test_number_pipeline():
-    def square(x): return x ** 2
-    def is_even(x): return x % 2 == 0
+    def square(x):
+        return x ** 2
+    def is_even(x):
+        return x % 2 == 0
 
     result = [1, 2, 3, 4, 5, 6] > (
         pipe
@@ -119,12 +124,14 @@ def test_fork_then_merge():
 # ── Identity in forks ─────────────────────────────────────────────────────────
 
 def test_identity_preserves_value_in_fork():
-    def double(x): return x * 2
+    def double(x):
+        return x * 2
     result = 5 > pipe / (pipe / double + pipe)
     assert result == [10, 5]
 
 def test_identity_preserves_fork_point_not_start():
-    def add_one(x): return x + 1
+    def add_one(x):
+        return x + 1
     branch = pipe / add_one / add_one
 
     result = 0 > pipe / add_one / (branch + pipe)
@@ -188,7 +195,6 @@ def test_safe_in_mixed_list_pipeline():
     assert result == [1, 2, 0, 4]
 
 def test_error_propagates_with_context():
-    import pytest
     with pytest.raises(RuntimeError) as exc_info:
         ["hello"] > pipe // int
     assert "step" in str(exc_info.value)
@@ -210,7 +216,8 @@ def test_log_parsing_pipeline():
         level, _, msg = line.partition(": ")
         return {"level": level, "msg": msg}
 
-    def is_error(record): return record["level"] == "ERROR"
+    def is_error(record):
+        return record["level"] == "ERROR"
 
     result = logs > (
         pipe
