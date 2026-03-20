@@ -27,8 +27,6 @@ value > pipe               fire pipeline, return raw value
 @   func                   filter — keep where func(x) is truthy
 +   pipeline               fork — always inside parens:  / (a + b) /
 
-identity                   pass value through unchanged — use in forks
-
 All of  / // @ +  are multiplicative — same precedence, left-to-right.
 >  is lower precedence    — pipeline always builds fully before firing.
 ```
@@ -350,14 +348,14 @@ stats = data > pipe / (
 
 ### Preserving a value across a transformation
 
-`identity` passes the value through unchanged. Use it in a fork to preserve the value at the fork point while transforming it in the other branch:
+pipe can also pas the value through unchanged. Use it in a fork to preserve the value at the fork point while transforming it in the other branch:
 
 ```python
-from pype import pipe, identity
+from pype import pipe
 
 branch = pipe / step2 / step3 / step4
 
-result = data > pipe / step1 / (branch + identity) / merge
+result = data > pipe / step1 / (branch + pipe) / merge
 #                                          ↑ value after step1, untouched
 ```
 
@@ -365,20 +363,20 @@ Since the fork point is where you place the parentheses, you control exactly whi
 
 ```python
 # preserve original input
-result = data > (branch + identity) / merge
+result = data > (branch + pipe) / merge
 
 # preserve value after step1
-result = data > pipe / step1 / (branch + identity) / merge
+result = data > pipe / step1 / (branch + pipe) / merge
 
 # preserve value after step2
-result = data > pipe / step1 / step2 / (branch + identity) / merge
+result = data > pipe / step1 / step2 / (branch + pipe) / merge
 ```
 
 Named pipelines make this even cleaner:
 
 ```python
 process  = pipe / step2 / step3 / step4
-preserve = identity
+preserve = pipe
 
 result = data > pipe / step1 / (process + preserve) / merge
 ```
