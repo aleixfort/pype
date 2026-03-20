@@ -22,7 +22,7 @@ Operators  (/ // @ + are same precedence — always left-to-right):
 See README.md for full documentation.
 """
 
-from pype.core import pipe, Pipeline, identity
+from pype.core import pipe, Pipeline
 
 from pype.utils import (
     # flatten
@@ -59,8 +59,7 @@ __all__ = [
     # core
     'pipe',
     'Pipeline',
-    'identity',
-    # flatten
+     # flatten
     'flatten',
     'flatten_deep',
     # sequence
