@@ -33,9 +33,9 @@ def flatten_deep(value):
     """
     def _flat(v):
         for x in v:
-            if isinstance(x, (list, tuple)): 
+            if isinstance(x, (list, tuple)):
                 yield from _flat(x)
-            else: 
+            else:
                 yield x
     return list(_flat(value))
 
@@ -151,8 +151,8 @@ def matching(pattern):
         pipe @ matching("ing")
         pipe @ matching(r"^\\d+$")
     """
-    import re
-    if isinstance(pattern, str): 
+    import re  # pylint: disable=import-outside-toplevel
+    if isinstance(pattern, str):
         return lambda x: pattern in x
     return lambda x: bool(re.search(pattern, x))
 
@@ -204,9 +204,9 @@ def safe(fallback):
     """
     def wrap(func):
         def guarded(value):
-            try:  
+            try:
                 return func(value)
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-caught
                 return fallback
         guarded.__name__ = getattr(func, '__name__', repr(func))
         return guarded

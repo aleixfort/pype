@@ -40,7 +40,7 @@ class Pipeline:
 
     def __truediv__(self, other):
         """/  : pass whole value to func  |  compose two pipelines"""
-        if isinstance(other, Pipeline): 
+        if isinstance(other, Pipeline):
             return Pipeline(self._steps + other._steps)
         if callable(other):
             return self._add('pass', other)
@@ -92,4 +92,3 @@ def identity(value):
     return value
 
 pipe     = Pipeline()
-
