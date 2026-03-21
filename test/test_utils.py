@@ -7,8 +7,8 @@
 
 """Tests for pype/utils.py — all utility functions."""
 
-from pype import pipe
-from pype.utils import (
+from miniplumber import pipe
+from miniplumber.utils import (
     flatten, flatten_deep,
     sort, unique, compact, take, drop, chunk, window, group,
     field, attr,
