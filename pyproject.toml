@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "miniplumber"
+version = "0.1.0"
+description = "A minimal functional pipeline for Python."
+readme = "README.md"
+license = { file = "LICENSE.md" }
+requires-python = ">=3.8"
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/aleixfort/miniplumber"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["miniplumber*"]
