@@ -2,9 +2,9 @@
 # pylint: disable=missing-function-docstring
 
 
-"""Tests for pype/core.py — Pipeline class and pipe sentinel."""
+"""Tests for miniplumber/core.py — Pipeline class and pipe sentinel."""
 import pytest
-from pype import pipe
+from miniplumber import pipe
 
 # ── / pass ────────────────────────────────────────────────────────────────────
 

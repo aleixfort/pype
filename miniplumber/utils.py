@@ -1,9 +1,9 @@
 """
-pype.utils — plain functions that plug into pipelines with / or @
+miniplumber.utils — plain functions that plug into pipelines with / or @
 
 All utilities are dependency-free and work with any pipeline step.
 
-    from pype import pipe, flatten, sort, field, debug
+    from miniplumber import pipe, flatten, sort, field, debug
 
     result = records > (
         pipe
@@ -14,9 +14,6 @@ All utilities are dependency-free and work with any pipeline step.
     )
 """
 
-from itertools import chain as _chain
-
-
 # ── Flatten ───────────────────────────────────────────────────────────────────
 
 def flatten(value):
@@ -24,7 +21,7 @@ def flatten(value):
         [[1,2],[3,4]] → [1,2,3,4]
         pipe // str.split / flatten
     """
-    return list(_chain.from_iterable(value))
+    return [item for sublist in value for item in sublist]
 
 def flatten_deep(value):
     """Flatten arbitrarily nested lists.

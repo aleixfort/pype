@@ -1,5 +1,5 @@
 """
-pype.core — the Pipeline class and pipe sentinel.
+miniplumber.core — the Pipeline class and pipe sentinel.
 """
 
 
@@ -76,7 +76,7 @@ class Pipeline:
                 value = _run[op](value, arg)
             except Exception as e:
                 raise RuntimeError(
-                    f"\npype: step {i+1}/{len(self._steps)} failed"
+                    f"\nminiplumber: step {i+1}/{len(self._steps)} failed"
                     f"\n  op    : {op}"
                     f"\n  func  : {getattr(arg, '__name__', repr(arg))}"
                     f"\n  input : {repr(value)[:120]}"

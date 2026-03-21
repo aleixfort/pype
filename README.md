@@ -1,9 +1,9 @@
-# pype
+# miniplumber
 
 A minimal functional pipeline for Python. Build lazy, reusable pipelines with a small set of intuitive operators. Fire them with `>`.
 
 ```python
-from pype import pipe, flatten, field, sort, having
+from miniplumber import pipe, flatten, field, sort, having
 
 result = records > (
     pipe
@@ -63,9 +63,9 @@ safe(fallback)(func)       return fallback on exception
 
 ---
 
-## Why pype?
+## Why miniplumber?
 
-Python has no native pipe operator. The workarounds are either verbose (nested function calls, step-by-step assignment) or fragile (operator precedence traps). pype solves this with three design decisions:
+Python has no native pipe operator. The workarounds are either verbose (nested function calls, step-by-step assignment) or fragile (operator precedence traps). miniplumber solves this with three design decisions:
 
 **One.** All pipeline operators (`/` `//` `@` `+`) share the same precedence level. They always evaluate left-to-right, with no surprises.
 
@@ -78,20 +78,20 @@ Python has no native pipe operator. The workarounds are either verbose (nested f
 ## Installation
 
 ```bash
-pip install pype          # coming soon
+pip install miniplumber
 # or just copy the pype/ folder into your project
 ```
 
 ```python
-from pype import pipe                               # minimum
-from pype import pipe, flatten, sort, debug         # with utilities
-from pype import *                                  # everything
+from miniplumber import pipe                               # minimum
+from miniplumber import pipe, flatten, sort, debug         # with utilities
+from miniplumber import *                                  # everything
 ```
 
 ### Package structure
 
 ```
-pype/
+miniplumber/
     __init__.py     # re-exports everything
     core.py         # Pipeline class and pipe sentinel — zero dependencies
     utils.py        # flatten, sort, field, debug, and friends
@@ -111,7 +111,7 @@ Every data pipeline is a combination of three operations:
 /    reduce  — collapse to single value   (one result)
 ```
 
-pype gives them clean operator syntax. Anything else — flatten, sort, group, debug — is a plain function you pass with `/`.
+miniplumber gives them clean operator syntax. Anything else — flatten, sort, group, debug — is a plain function you pass with `/`.
 
 ### List mode
 
@@ -311,7 +311,7 @@ Named pipelines are the core of the pype pattern. Write small focused functions,
 
 ```python
 import statistics
-from pype import pipe
+from miniplumber import pipe
 
 result = data > pipe / (
     pipe / statistics.mean   +
@@ -351,7 +351,7 @@ stats = data > pipe / (
 pipe can also pas the value through unchanged. Use it in a fork to preserve the value at the fork point while transforming it in the other branch:
 
 ```python
-from pype import pipe
+from miniplumber import pipe
 
 branch = pipe / step2 / step3 / step4
 
@@ -387,7 +387,7 @@ For capturing values from further back — or accessing them after the pipeline 
 
 ## Utilities
 
-All utilities live in `pype/utils.py` and are re-exported from `pype` directly.
+All utilities live in `miniplumber/utils.py` and are re-exported from `miniplumber` directly.
 
 ### Flatten
 
@@ -455,7 +455,7 @@ A real-world example showing named pipelines, configurable functions, fork, and 
 ```python
 import cv2
 import numpy as np
-from pype import pipe
+from miniplumber import pipe
 
 def blur(k=5):
     def _blur(img): return cv2.GaussianBlur(img, (k, k), 0)
@@ -501,7 +501,7 @@ paths > pipe // (load / preproc / edges / save("out.jpg"))
 
 ## Comparison with other libraries
 
-| | **pype** | **pipe** | **sspipe** | **toolz** |
+| | **miniplumber** | **pipe** | **sspipe** | **toolz** |
 |---|---|---|---|---|
 | Operators | `>` `/` `//` `@` `+` | `\|` | `\|` | function calls |
 | Precedence-safe | ✅ all same level | ❌ mixes levels | ❌ mixes levels | ✅ no operators |
@@ -513,11 +513,3 @@ paths > pipe // (load / preproc / edges / save("out.jpg"))
 | Type filter | `@ instance(str)` | ❌ | ❌ | ❌ |
 | Fork / parallel | `+` | ❌ | `tee` (copy only) | `juxt` |
 | Zero dependencies | ✅ | ✅ | ❌ | ❌ |
-
-**pipe (JulienPalard)** — most popular Python pipe library. Uses `|` which mixes precedence levels — combining it with comparison operators silently produces wrong results. Pipelines are eager so you can't name or reuse a half-built pipeline.
-
-**sspipe** — similar to `pipe`, also uses `|`. Adds parallel support via `tee` but only for copying values, not running different transformations.
-
-**toolz** — serious functional programming library. No operator overloading, everything is a function call. Very composable via `compose` and `curry` but verbose. `pipe(value, f1, f2, f3)` executes immediately — not lazy.
-
-**pype** — the key differentiator is the lazy pipeline object. Because nothing executes until `>`, pipelines are first-class values. The operator set maps directly to map/filter/reduce, making the mental model explicit.

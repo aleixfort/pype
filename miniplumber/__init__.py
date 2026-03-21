@@ -1,7 +1,7 @@
 """
-pype — a minimal functional pipeline for Python
+miniplumber — a minimal functional pipeline for Python
 
-    from pype import pipe, flatten, field, sort, debug
+    from miniplumber import pipe, flatten, field, sort, debug
 
     result = records > (
         pipe
@@ -22,9 +22,9 @@ Operators  (/ // @ + are same precedence — always left-to-right):
 See README.md for full documentation.
 """
 
-from pype.core import pipe, Pipeline
+from miniplumber.core import pipe, Pipeline
 
-from pype.utils import (
+from miniplumber.utils import (
     # flatten
     flatten,
     flatten_deep,

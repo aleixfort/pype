@@ -6,8 +6,8 @@
 
 import statistics
 import pytest
-from pype import pipe
-from pype.utils import (
+from miniplumber  import pipe
+from miniplumber.utils import (
     flatten,
     sort,
     having,
