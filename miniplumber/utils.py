@@ -53,17 +53,29 @@ def unique(value):
     seen = set()
     return [x for x in value if not (x in seen or seen.add(x))]
 
-def take(n):
-    """Keep first n elements.
-        pipe / take(3)
+def take(*args):
     """
-    return lambda v: v[:n]
+    Slice a sequence using standard Python slice semantics.
+    Wraps the built-in slice() to make it callable in a pipeline.
 
-def drop(n):
-    """Skip first n elements.
-        pipe / drop(3)
+    Arguments mirror Python's slice(stop), slice(start, stop),
+    and slice(start, stop, step) exactly.
+
+    Examples:
+        pipe / cut(3)              # [:3]        first 3 elements
+        pipe / cut(3, None)        # [3:]        skip first 3
+        pipe / cut(1, 5)           # [1:5]       elements 1 to 4
+        pipe / cut(1, 5, 2)        # [1:5:2]     every other element
+        pipe / cut(None, None, -1) # [::-1]      reverse
+
+    Note:
+        cut() is a thin callable wrapper over the built-in slice().
+        pipe / cut(1, 5) is equivalent to seq[slice(1, 5)] or seq[1:5].
+        Works on any object that supports __getitem__ with a slice:
+        lists, tuples, strings, numpy arrays.
     """
-    return lambda v: v[n:]
+    s = slice(*args)
+    return lambda v: v[s]
 
 def chunk(n):
     """Split into n-sized groups.
@@ -79,11 +91,6 @@ def window(n):
     """
     return lambda v: [tuple(v[i:i+n]) for i in range(len(v) - n + 1)]
 
-def compact(value):
-    """Remove falsy values (None, 0, "", [], False).
-        pipe / compact
-    """
-    return [x for x in value if x]
 
 def group(key):
     """Group elements into a dict by key function.
@@ -137,12 +144,6 @@ def between(lo, hi):
     """
     return lambda x: lo <= x <= hi
 
-def nonzero(x):
-    """Keep truthy values.
-        pipe @ nonzero
-    """
-    return bool(x)
-
 def matching(pattern):
     """Keep elements containing a substring or matching a regex.
         pipe @ matching("ing")
@@ -159,17 +160,8 @@ def having(**kwargs):
     """
     return lambda x: all(x.get(k) == v for k, v in kwargs.items())
 
+# ── Debugging  ────────────────────────────────────────────────────────────
 
-# ── Debugging ─────────────────────────────────────────────────────────────────
-
-def debug(label=""):
-    """Print value mid-pipeline and pass through unchanged.
-        pipe / debug("after flatten") // str.upper
-    """
-    def _debug(value):
-        print(f"[{label}]  {value}" if label else str(value))
-        return value
-    return _debug
 
 def tap(func):
     """Call func as side effect, pass value through unchanged.
@@ -179,18 +171,6 @@ def tap(func):
         func(value)
         return value
     return _tap
-
-def capture(store, key):
-    """Snapshot a mid-pipeline value into a dict, pass through unchanged.
-        captured = {}
-        result = data > pipe // str.split / capture(captured, "words") / flatten
-        print(captured["words"])
-    """
-    def _capture(value):
-        store[key] = value
-        return value
-    return _capture
-
 
 # ── Error handling ────────────────────────────────────────────────────────────
 
