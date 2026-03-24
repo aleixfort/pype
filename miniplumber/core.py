@@ -77,8 +77,9 @@ class Pipeline:
             except Exception as e:
                 raise RuntimeError(
                     f"\nminiplumber: step {i+1}/{len(self._steps)} failed"
-                    f"\n  op    : {op}"
-                    f"\n  func  : {getattr(arg, '__name__', repr(arg))}"
+                    f"\n  cause : {type(e).__name__}: {e}"
+                    f"\n  pipe operation    : {op}"
+                    f"\n  function call  : {getattr(arg, '__name__', repr(arg))}"
                     f"\n  input : {repr(value)[:120]}"
                 ) from e
         return value
