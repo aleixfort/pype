@@ -12,7 +12,11 @@ def _exec_map(value, func):
     return [func(x) for x in value]
 
 def _exec_filter(value, func):
-    return [x for x in value if func(x)]
+    if not hasattr(value, '__iter__') or isinstance(value, (str, bytes)):
+        # scalar: return value if truthy, None if not
+        return value if func(value) else None
+    else:
+        return [x for x in value if func(x)]
 
 def _exec_fork(value, pipelines):
     return [value > p for p in pipelines]
