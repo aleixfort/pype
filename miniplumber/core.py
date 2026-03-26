@@ -9,6 +9,10 @@ def _exec_pass(value, func):
     return func(value)
 
 def _exec_map(value, func):
+    if isinstance(value, dict):
+        return {k: func(v) for k, v in value.items()}
+    if not hasattr(value, '__iter__') or isinstance(value, (str, bytes)):
+        return func(value)
     return [func(x) for x in value]
 
 def _exec_filter(value, func):
@@ -51,7 +55,7 @@ class Pipeline:
         raise TypeError(f"/ expects a callable or Pipeline — got {type(other).__name__}")
 
     def __floordiv__(self, func):
-        """// : map func over each element  (one in → one out, same length)"""
+        """// : map func over elements (list), values (dict), or the value itself (scalar)"""
         if not callable(func):
             raise TypeError(f"// expects a callable — got {type(func).__name__}")
         return self._add('map', func)
