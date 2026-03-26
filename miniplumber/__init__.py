@@ -31,6 +31,8 @@ from miniplumber.utils import (
     # sequence
     sort,
     unique,
+    twist,
+    named,
     take,
     drop,
     chunk,
@@ -65,6 +67,8 @@ __all__ = [
     # sequence
     'sort',
     'unique',
+    'twist',
+    'named',
     'take',
     'drop',
     'chunk',

@@ -53,7 +53,7 @@ def unique(value):
     seen = set()
     return [x for x in value if not (x in seen or seen.add(x))]
 
-def take(*args):
+def keep(*args):
     """
     Slice a sequence using standard Python slice semantics.
     Wraps the built-in slice() to make it callable in a pipeline.
@@ -76,6 +76,21 @@ def take(*args):
     """
     s = slice(*args)
     return lambda v: v[s]
+
+def twist(lists):
+    """Zip parallel fork outputs into per-position groups.
+        [[a1,a2,a3],[b1,b2,b3]] → [[a1,b1],[a2,b2],[a3,b3]]
+        data > pipe / (pipe1 + pipe2) / twist
+        data > pipe / (pipe1 + pipe2) / twist / flatten   # if you want flat
+    """
+    return [list(group) for group in zip(*lists)]
+
+def named(keys):
+    """Map a flat list to a dict using positional key names.
+        [0.73, 0.61, 0.44] / named(["micro", "meso", "macro"])
+        → {"micro": 0.73, "meso": 0.61, "macro": 0.44}
+    """
+    return lambda values: dict(zip(keys, values))
 
 def chunk(n):
     """Split into n-sized groups.
@@ -124,26 +139,6 @@ def attr(name, default=None):
 
 # ── Predicates for @ ──────────────────────────────────────────────────────────
 
-def equals(value):
-    """Keep elements equal to value.
-        pipe @ equals("cat")
-        pipe @ equals(42)
-    """
-    return lambda x: x == value
-
-def instance(type_):
-    """Keep elements of a given type.
-        pipe @ instance(str)
-        pipe @ instance(int)
-    """
-    return lambda x: isinstance(x, type_)
-
-def between(lo, hi):
-    """Keep elements between lo and hi inclusive.
-        pipe @ between(18, 65)
-    """
-    return lambda x: lo <= x <= hi
-
 def matching(pattern):
     """Keep elements containing a substring or matching a regex.
         pipe @ matching("ing")
@@ -162,7 +157,6 @@ def having(**kwargs):
 
 # ── Debugging  ────────────────────────────────────────────────────────────
 
-
 def tap(func):
     """Call func as side effect, pass value through unchanged.
         pipe / tap(log_to_file) / tap(send_metric)
@@ -171,20 +165,3 @@ def tap(func):
         func(value)
         return value
     return _tap
-
-# ── Error handling ────────────────────────────────────────────────────────────
-
-def safe(fallback):
-    """Wrap a function — return fallback on any exception.
-        pipe // safe(0)(int)          replace failed int() with 0
-        pipe / safe([])(parse_json)   return [] if parse fails
-    """
-    def wrap(func):
-        def guarded(value):
-            try:
-                return func(value)
-            except Exception:  # pylint: disable=broad-exception-caught
-                return fallback
-        guarded.__name__ = getattr(func, '__name__', repr(func))
-        return guarded
-    return wrap
